@@ -9,15 +9,17 @@ namespace Infrastructure.Data
     {
         public MushroomsDbContext(DbContextOptions<MushroomsDbContext> options) : base(options) { }
 
-        public DbSet<Species> Species { get; set; }
         public DbSet<Mushroom> Mushrooms { get; set; }
         public DbSet<Mushrooming> Mushroomings { get; set; }
         public DbSet<MushroomingMushroom> MushroomingMushrooms { get; set; }
+        public DbSet<MushroomingMushroomPhoto> MushroomingMushroomPhotos { get; set; }
+        public DbSet<Species> Species { get; set; }
         public DbSet<UserReview> UserReviews { get; set; }
+        public DbSet<Location> Locations { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(builder);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
