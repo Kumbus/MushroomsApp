@@ -71,12 +71,20 @@ namespace API
             builder.Services.AddScoped<IMushroomingRepository, MushroomingRepository>();
             builder.Services.AddScoped<IMushroomRepository, MushroomRepository>();
             builder.Services.AddScoped<ISpeciesRepository, SpeciesRepository>();
+            builder.Services.AddScoped<IMushroomingMushroomRepository, MushroomingMushroomRepository>();
+            builder.Services.AddScoped<IMushroomingMushroomPhotoRepository, MushroomingMushroomPhotoRepository>();
+            builder.Services.AddScoped<IUserReviewRepository, UserReviewRepository>();
 
             builder.Services.AddScoped(typeof(IBaseService<,,,>), typeof(BaseService<,,,>));
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IMushroomingService, MushroomingService>();
             builder.Services.AddScoped<IMushroomService, MushroomService>();
             builder.Services.AddScoped<ISpeciesService, SpeciesService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
+            builder.Services.AddScoped<IMushroomingMushroomService, MushroomingMushroomService>();
+            builder.Services.AddScoped<IMushroomingMushroomPhotoService, MushroomingMushroomPhotoService>();
+            builder.Services.AddScoped<IUserReviewService, UserReviewService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();

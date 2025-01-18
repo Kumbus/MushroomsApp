@@ -1,8 +1,7 @@
-﻿namespace Domain.Entities
+﻿namespace Application.DTOs.MushroomingMushroomDTOs
 {
-    public class MushroomingMushroom
+    public class CreateMushroomingMushroomDto
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
         public Guid MushroomingId { get; set; }
         public Guid MushroomId { get; set; }
         public Guid UserId { get; set; }
@@ -13,9 +12,6 @@
         public double Longitude { get; set; }
         public DateTime DateCollected { get; set; }
         public string Notes { get; set; }
-
-        public Mushrooming Mushrooming { get; set; }
-        public Mushroom Mushroom { get; set; }
-        public User CollectedBy { get; set; }
     }
+
 }

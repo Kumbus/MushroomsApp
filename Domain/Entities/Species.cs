@@ -9,5 +9,4 @@
 
         public ICollection<Mushroom> Mushrooms { get; set; } = [];
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace Domain.Entities
 {
-
     public class User : IdentityUser<Guid>
     {
         public string FirstName { get; set; }
@@ -14,5 +13,4 @@ namespace Domain.Entities
         public ICollection<MushroomingMushroom> MushroomingMushrooms { get; set; } = [];
         public ICollection<UserReview> Reviews { get; set; } = [];
     }
-
 }

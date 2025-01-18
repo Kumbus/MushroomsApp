@@ -12,5 +12,4 @@
         public Mushrooming Mushrooming { get; set; }
         public User User { get; set; }
     }
-
 }

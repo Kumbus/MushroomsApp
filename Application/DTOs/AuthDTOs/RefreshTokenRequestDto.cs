@@ -1,8 +1,9 @@
-﻿namespace Application.DTOs.UserDTOs
+﻿namespace Application.DTOs.AuthDTOs
 {
-    public class AuthResponseDto
+    public class RefreshTokenRequestDto
     {
         public string Token { get; set; }
         public string RefreshToken { get; set; }
     }
+
 }
