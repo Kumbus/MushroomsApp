@@ -21,7 +21,7 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] QueryParameters parameters)
         {
-            var response = await _mushroomService.GetAllMushroomsAsync(parameters);
+            var response = await _mushroomService.GetMultipleAsync(parameters, m => m.Species);
             if (!response.Success)
                 return BadRequest(response.Message);
 
@@ -32,7 +32,7 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var response = await _mushroomService.GetMushroomByIdAsync(id);
+            var response = await _mushroomService.GetByIdAsync(id, m => m.Species);
             if (!response.Success)
                 return NotFound(response.Message);
 
@@ -43,7 +43,7 @@ namespace API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Create([FromBody] CreateMushroomDto dto)
         {
-            var response = await _mushroomService.CreateMushroomAsync(dto);
+            var response = await _mushroomService.CreateAsync(dto);
             if (!response.Success)
                 return BadRequest(response.Message);
 
@@ -54,7 +54,7 @@ namespace API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateMushroomDto dto)
         {
-            var response = await _mushroomService.UpdateMushroomAsync(id, dto);
+            var response = await _mushroomService.UpdateAsync(id, dto);
             if (!response.Success)
                 return BadRequest(response.Message);
 
@@ -65,7 +65,7 @@ namespace API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var response = await _mushroomService.DeleteMushroomAsync(id);
+            var response = await _mushroomService.DeleteAsync(id);
             if (!response.Success)
                 return NotFound(response.Message);
 

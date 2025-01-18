@@ -1,15 +1,9 @@
 ﻿using Application.DTOs.MushroomDTOs;
-using Domain.Helpers.Extensions;
-using Domain.Helpers.Responses;
+using Domain.Entities;
 
 namespace Application.ServicesInterfaces
 {
-    public interface IMushroomService
+    public interface IMushroomService : IBaseService<Mushroom, MushroomDto, CreateMushroomDto, UpdateMushroomDto>
     {
-        Task<ServiceResponse<MushroomDto?>> GetMushroomByIdAsync(Guid id);
-        Task<ServiceResponse<PagedResult<MushroomDto>>> GetAllMushroomsAsync(QueryParameters parameters);
-        Task<ServiceResponse<MushroomDto>> CreateMushroomAsync(CreateMushroomDto dto);
-        Task<ServiceResponse<MushroomDto>> UpdateMushroomAsync(Guid id, UpdateMushroomDto dto);
-        Task<ServiceResponse<bool>> DeleteMushroomAsync(Guid id);
     }
 }

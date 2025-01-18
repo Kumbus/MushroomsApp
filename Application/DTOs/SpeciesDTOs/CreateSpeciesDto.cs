@@ -1,10 +1,10 @@
 ﻿namespace Application.DTOs.SpeciesDTOs
 {
-    public class SpeciesDto
+    public class CreateSpeciesDto
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string PreferredHabitat { get; set; }
     }
+
 }

@@ -22,6 +22,8 @@ namespace Application.Mappings
             CreateMap<Location, LocationDto>();
 
             CreateMap<Species, SpeciesDto>();
+            CreateMap<CreateSpeciesDto, Species>();
+            CreateMap<UpdateSpeciesDto, Species>();
         }
     }
 
