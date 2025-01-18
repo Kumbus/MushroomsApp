@@ -1,6 +1,6 @@
 ﻿namespace Application.DTOs.UserDTOs
 {
-    public class GoogleLoginDto
+    public class FacebookLoginDto
     {
         public string Token { get; set; }
     }

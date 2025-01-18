@@ -1,7 +1,9 @@
 ﻿namespace Application.DTOs.UserDTOs
 {
-    public class GoogleLoginDto
+    public class RefreshTokenRequestDto
     {
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
     }
+
 }

@@ -44,5 +44,30 @@ namespace API.Controllers
 
             return Ok(result.Data);
         }
+
+        [HttpPost("facebook-login")]
+        public async Task<IActionResult> FacebookLogin([FromBody] FacebookLoginDto dto)
+        {
+            var result = await _authService.FacebookLoginAsync(dto.Token);
+            if (!result.Success)
+            {
+                return Unauthorized(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto dto)
+        {
+            var result = await _authService.RefreshTokenAsync(dto);
+            if (!result.Success)
+            {
+                return Unauthorized(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+
     }
 }

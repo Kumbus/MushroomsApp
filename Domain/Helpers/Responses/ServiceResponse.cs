@@ -1,4 +1,4 @@
-﻿namespace Domain.Helpers
+﻿namespace Domain.Helpers.Responses
 {
     public class ServiceResponse<T>
     {

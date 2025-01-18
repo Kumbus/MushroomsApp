@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MushroomsDbContext))]
-    partial class MushroomsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250117182302_RefreshToken")]
+    partial class RefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,11 +107,21 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("LocationId")
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<Guid?>("LocationId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -488,13 +501,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Mushrooming", b =>
                 {
-                    b.HasOne("Domain.Entities.Location", "Location")
+                    b.HasOne("Domain.Entities.Location", null)
                         .WithMany("Mushroomings")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
+                        .HasForeignKey("LocationId");
                 });
 
             modelBuilder.Entity("Domain.Entities.MushroomingMushroom", b =>

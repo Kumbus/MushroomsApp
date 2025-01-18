@@ -1,9 +1,12 @@
 ﻿using Application.DTOs.UserDTOs;
+using Application.Helpers.Interfaces;
 using Application.ServicesInterfaces;
 using Domain.Entities;
-using Domain.Helpers;
 using Domain.Helpers.Interfaces;
+using Domain.Helpers.Responses;
 using Domain.RepositoriesInterfaces;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace Application.Services
 {
@@ -12,12 +15,14 @@ namespace Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly IGoogleTokenValidator _googleTokenValidator;
+        private readonly IFacebookTokenValidator _facebookTokenValidator;
 
-        public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IGoogleTokenValidator googleTokenValidator)
+        public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IGoogleTokenValidator googleTokenValidator, IFacebookTokenValidator facebookTokenValidator)
         {
             _userRepository = userRepository;
             _jwtTokenGenerator = jwtTokenGenerator;
             _googleTokenValidator = googleTokenValidator;
+            _facebookTokenValidator = facebookTokenValidator;
         }
 
         public async Task<ServiceResponse<AuthResponseDto>> RegisterAsync(RegisterUserDto dto)
@@ -46,11 +51,16 @@ namespace Application.Services
             if (user == null || !await _userRepository.CheckPasswordAsync(user, dto.Password))
                 return new ServiceResponse<AuthResponseDto> { Success = false, Message = "Invalid credentials." };
 
-            var token = _jwtTokenGenerator.GenerateToken(user);
+            var jwtToken = _jwtTokenGenerator.GenerateToken(user);
+            var refreshToken = GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _userRepository.UpdateAsync(user);
+
             return new ServiceResponse<AuthResponseDto>
             {
                 Success = true,
-                Data = new AuthResponseDto { Token = token }
+                Data = new AuthResponseDto { Token = jwtToken, RefreshToken = refreshToken }
             };
         }
 
@@ -70,16 +80,98 @@ namespace Application.Services
                     FirstName = googleUser.GivenName,
                     LastName = googleUser.FamilyName
                 };
-                await _userRepository.CreateUserAsync(user, null);
+                await _userRepository.CreateUserWithoutPasswordAsync(user);
             }
 
-            var token = _jwtTokenGenerator.GenerateToken(user);
+            var jwtToken = _jwtTokenGenerator.GenerateToken(user);
+            var refreshToken = GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _userRepository.UpdateAsync(user);
+
             return new ServiceResponse<AuthResponseDto>
             {
                 Success = true,
-                Data = new AuthResponseDto { Token = token }
+                Data = new AuthResponseDto { Token = jwtToken, RefreshToken = refreshToken }
             };
         }
-    }
 
+        public async Task<ServiceResponse<AuthResponseDto>> FacebookLoginAsync(string token)
+        {
+            var facebookUser = await _facebookTokenValidator.ValidateAsync(token);
+            if (facebookUser == null)
+            {
+                return new ServiceResponse<AuthResponseDto> { Success = false, Message = "Invalid Facebook token." };
+            }
+
+            var user = await _userRepository.GetUserByEmailAsync(facebookUser.Email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    UserName = facebookUser.Email,
+                    Email = facebookUser.Email,
+                    FirstName = facebookUser.FirstName,
+                    LastName = facebookUser.LastName
+                };
+
+                var result = await _userRepository.CreateUserWithoutPasswordAsync(user);
+                if (!result.Succeeded)
+                {
+                    return new ServiceResponse<AuthResponseDto> { Success = false, Message = "Failed to register user." };
+                }
+            }
+
+            var jwtToken = _jwtTokenGenerator.GenerateToken(user);
+            var refreshToken = GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _userRepository.UpdateAsync(user);
+
+            return new ServiceResponse<AuthResponseDto>
+            {
+                Success = true,
+                Data = new AuthResponseDto { Token = jwtToken, RefreshToken = refreshToken }
+            };
+        }
+
+        public async Task<ServiceResponse<AuthResponseDto>> RefreshTokenAsync(RefreshTokenRequestDto dto)
+        {
+            var principal = _jwtTokenGenerator.GetPrincipalFromExpiredToken(dto.Token);
+            var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var user = await _userRepository.GetByIdAsync(Guid.Parse(userId));
+            if (user == null || user.RefreshToken != dto.RefreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return new ServiceResponse<AuthResponseDto> { Success = false, Message = "Invalid Refresh Token" };
+            }
+
+            var newJwtToken = _jwtTokenGenerator.GenerateToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _userRepository.UpdateAsync(user);
+
+            return new ServiceResponse<AuthResponseDto>
+            {
+                Success = true,
+                Data = new AuthResponseDto
+                {
+                    Token = newJwtToken,
+                    RefreshToken = newRefreshToken
+                }
+            };
+        }
+
+        private static string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+    }
 }
