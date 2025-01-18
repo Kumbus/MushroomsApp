@@ -69,9 +69,12 @@ namespace API
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<IMushroomingRepository, MushroomingRepository>();
+            builder.Services.AddScoped<IMushroomRepository, MushroomRepository>();
+            builder.Services.AddScoped<ISpeciesRepository, SpeciesRepository>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IMushroomingService, MushroomingService>();
+            builder.Services.AddScoped<IMushroomService, MushroomService>();
 
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
