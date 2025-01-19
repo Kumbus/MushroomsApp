@@ -10,7 +10,7 @@ namespace Infrastructure.Repositories
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         protected readonly MushroomsDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly DbSet<T> _dbSet;
 
         public RepositoryBase(MushroomsDbContext context)
         {

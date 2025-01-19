@@ -85,6 +85,8 @@ namespace API
             builder.Services.AddScoped<IMushroomingMushroomPhotoService, MushroomingMushroomPhotoService>();
             builder.Services.AddScoped<IUserReviewService, UserReviewService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserStatisticsService, UserStatisticsService>();
+
 
             builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
