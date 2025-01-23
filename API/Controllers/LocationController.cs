@@ -54,9 +54,6 @@ namespace API.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLocationDto dto)
         {
-            if (id != dto.Id)
-                return BadRequest("Id mismatch");
-
             var response = await _locationService.UpdateAsync(id, dto);
             if (!response.Success)
                 return BadRequest(response.Message);

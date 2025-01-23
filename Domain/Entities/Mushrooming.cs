@@ -10,9 +10,10 @@
         public Guid LocationId { get; set; }
         public Location Location { get; set; }
 
-        public ICollection<User> Users { get; set; } = [];
+        public Guid UserId { get; set; }
+        public User User { get; set; }
+
         public ICollection<MushroomingMushroom> CollectedMushrooms { get; set; } = [];
         public ICollection<UserReview> Reviews { get; set; } = [];
     }
-
 }

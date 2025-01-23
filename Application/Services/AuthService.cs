@@ -40,7 +40,7 @@ namespace Application.Services
 
             var result = await _userRepository.CreateUserAsync(user, dto.Password);
             if (!result.Succeeded)
-                return new ServiceResponse<AuthResponseDto> { Success = false, Message = "Registration failed." };
+                return new ServiceResponse<AuthResponseDto> { Success = false, Message = result.Errors?.FirstOrDefault().Description };
 
             return new ServiceResponse<AuthResponseDto> { Success = true };
         }

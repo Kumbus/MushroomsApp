@@ -15,7 +15,9 @@ namespace Application.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<Mushrooming, MushroomingDto>().ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location));
+            CreateMap<Mushrooming, MushroomingDto>()
+                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Location))
+                .ForMember(dest => dest.CollectedMushrooms, opt => opt.MapFrom(src => src.CollectedMushrooms));
             CreateMap<CreateMushroomingDto, Mushrooming>();
             CreateMap<UpdateMushroomingDto, Mushrooming>();
 

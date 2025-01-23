@@ -15,7 +15,7 @@
             TotalCount = totalCount;
             TotalPages = (int)Math.Ceiling((decimal)totalCount / pageSize);
             PageSize = currentPageSize;
-            CurrentPage = currentPage;
+            CurrentPage = totalCount != 0 ? currentPage : 0;
         }
     }
 }

@@ -94,6 +94,5 @@ namespace Infrastructure.Repositories
 
             return new PagedResult<T>(items, parameters.PageSize, totalCount, parameters.Page);
         }
-
     }
 }

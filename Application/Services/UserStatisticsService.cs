@@ -23,38 +23,38 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<PagedResult<UserMushroomStatisticsDto>>> GetMushroomStatisticsAsync(Guid userId, QueryParameters parameters)
+        public async Task<ServiceResponse<PagedResult<MushroomStatisticsDto>>> GetMushroomStatisticsAsync(Guid userId, QueryParameters parameters)
         {
             var result = await _mushroomingMushroomRepository.GetMushroomStatisticsPagedAsync(userId, parameters);
 
-            var groupedDto = result.Items.Select(group => new MushroomStatisticsDto
+            var groupedDto = result.Items.Select(stat => new MushroomStatisticsDto
             {
-                MushroomName = group.Key,
-                TotalWeight = group.Sum(m => m.Weight),
-                Count = group.Count()
+                MushroomName = stat.Key,
+                TotalWeight = stat.Items.Sum(m => m.Weight),
+                Count = stat.Items.Count
             });
 
-            return new ServiceResponse<PagedResult<UserMushroomStatisticsDto>>
+            return new ServiceResponse<PagedResult<MushroomStatisticsDto>>
             {
                 Success = true,
-                Data = new PagedResult<UserMushroomStatisticsDto>((IEnumerable<UserMushroomStatisticsDto>)groupedDto, result.TotalCount, parameters.PageSize, parameters.Page)
+                Data = new PagedResult<MushroomStatisticsDto>(groupedDto, parameters.PageSize, result.TotalCount, parameters.Page)
             };
         }
 
-        public async Task<ServiceResponse<PagedResult<UserMushroomingStatisticsDto>>> GetMushroomingStatisticsAsync(Guid userId, QueryParameters parameters)
+        public async Task<ServiceResponse<PagedResult<MushroomingStatisticsDto>>> GetMushroomingStatisticsAsync(Guid userId, QueryParameters parameters)
         {
             var result = await _mushroomingRepository.GetMushroomingStatisticsPagedAsync(userId, parameters);
 
-            var groupedDto = result.Items.Select(group => new MushroomingStatisticsDto
+            var groupedDto = result.Items.Select(stat => new MushroomingStatisticsDto
             {
-                LocationName = group.Key,
-                MushroomingCount = group.Count()
+                LocationName = stat.Key,
+                MushroomingCount = stat.Items.Count
             });
 
-            return new ServiceResponse<PagedResult<UserMushroomingStatisticsDto>>
+            return new ServiceResponse<PagedResult<MushroomingStatisticsDto>>
             {
                 Success = true,
-                Data = new PagedResult<UserMushroomingStatisticsDto>((IEnumerable<UserMushroomingStatisticsDto>)groupedDto, result.TotalCount, parameters.PageSize, parameters.Page)
+                Data = new PagedResult<MushroomingStatisticsDto>(groupedDto, parameters.PageSize, result.TotalCount, parameters.Page)
             };
         }
     }

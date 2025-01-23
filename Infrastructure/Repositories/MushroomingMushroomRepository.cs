@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Helpers.Entities;
 using Domain.Helpers.Extensions;
 using Domain.Helpers.Responses;
 using Domain.RepositoriesInterfaces;
@@ -11,20 +12,27 @@ namespace Infrastructure.Repositories
     {
         public MushroomingMushroomRepository(MushroomsDbContext context) : base(context) { }
 
-        public async Task<PagedResult<IGrouping<string, MushroomingMushroom>>> GetMushroomStatisticsPagedAsync(Guid userId, QueryParameters parameters)
+        public async Task<PagedResult<GroupedStatistics<MushroomingMushroom>>> GetMushroomStatisticsPagedAsync(Guid userId, QueryParameters parameters)
         {
-            var query = _dbSet
+            var groupedQuery = _dbSet
                 .Where(m => m.UserId == userId)
-                .GroupBy(m => m.Mushroom.Name);
+                .GroupBy(m => m.Mushroom.Name)
+                .Select(g => new GroupedStatistics<MushroomingMushroom>
+                {
+                    Key = g.Key,
+                    Items = g.ToList()
+                });
 
-            var totalCount = await query.CountAsync();
+            var groupedData = await groupedQuery.ToListAsync();
 
-            var pagedItems = await query
+            var totalCount = groupedData.Count;
+
+            var pagedItems = groupedData
                 .Skip((parameters.Page - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
-                .ToListAsync();
+                .AsEnumerable();
 
-            return new PagedResult<IGrouping<string, MushroomingMushroom>>(pagedItems, totalCount, parameters.PageSize, parameters.Page);
+            return new PagedResult<GroupedStatistics<MushroomingMushroom>>(pagedItems, parameters.PageSize, totalCount, parameters.Page);
         }
     }
 }

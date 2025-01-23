@@ -42,7 +42,7 @@ namespace Application.Services
         {
             var pagedResult = await _repository.GetPagedAsync(parameters, includes);
             var items = _mapper.Map<IEnumerable<TDto>>(pagedResult.Items);
-            var pagedResponse = new PagedResult<TDto>(items, pagedResult.TotalCount, parameters.PageSize, parameters.Page);
+            var pagedResponse = new PagedResult<TDto>(items, parameters.PageSize, pagedResult.TotalCount, parameters.Page);
 
             return new ServiceResponse<PagedResult<TDto>>
             {

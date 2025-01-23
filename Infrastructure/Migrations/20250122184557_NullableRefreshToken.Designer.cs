@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MushroomsDbContext))]
-    partial class MushroomsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250122184557_NullableRefreshToken")]
+    partial class NullableRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,14 +120,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("LocationId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Mushroomings");
                 });
@@ -464,6 +462,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MushroomingUser", b =>
+                {
+                    b.Property<Guid>("MushroomingsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MushroomingsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("MushroomingUser");
+                });
+
             modelBuilder.Entity("Domain.Entities.Mushroom", b =>
                 {
                     b.HasOne("Domain.Entities.Species", "Species")
@@ -483,15 +496,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("Mushroomings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Location");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.MushroomingMushroom", b =>
@@ -602,6 +607,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MushroomingUser", b =>
+                {
+                    b.HasOne("Domain.Entities.Mushrooming", null)
+                        .WithMany()
+                        .HasForeignKey("MushroomingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.Location", b =>
                 {
                     b.Navigation("Mushroomings");
@@ -627,8 +647,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("MushroomingMushrooms");
-
-                    b.Navigation("Mushroomings");
 
                     b.Navigation("Reviews");
                 });

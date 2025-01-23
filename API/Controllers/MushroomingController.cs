@@ -21,7 +21,7 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] QueryParameters parameters)
         {
-            var response = await _mushroomingService.GetMultipleAsync(parameters, m => m.Location);
+            var response = await _mushroomingService.GetMultipleAsync(parameters, m => m.Location, m => m.User, m => m.CollectedMushrooms);
             if (!response.Success)
                 return BadRequest(response.Message);
 
@@ -33,7 +33,7 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var response = await _mushroomingService.GetByIdAsync(id, m => m.Location);
+            var response = await _mushroomingService.GetByIdAsync(id, m => m.Location, m => m.User, m => m.CollectedMushrooms);
             if (!response.Success)
                 return NotFound(response.Message);
 
@@ -47,6 +47,7 @@ namespace API.Controllers
             var response = await _mushroomingService.CreateAsync(dto);
             if (!response.Success)
                 return BadRequest(response.Message);
+
 
             return Ok(response.Data);
         }

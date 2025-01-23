@@ -14,7 +14,6 @@
         public DateTime DateCollected { get; set; }
         public string Notes { get; set; }
 
-        public Mushrooming Mushrooming { get; set; }
         public Mushroom Mushroom { get; set; }
         public User CollectedBy { get; set; }
     }
